@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from parser.bar import parse_bar
+from parser.lvup import CHARACTERS as LVUP_CHARACTERS
 from parser.registry import REGISTRY, FLAT_TABLES
 
 
@@ -41,6 +42,127 @@ def entries_to_csv(entries) -> str:
             row.append(str(value))
         writer.writerow(row)
     return buf.getvalue()
+
+
+def _yaml_scalar(value) -> str:
+    if isinstance(value, bytes):
+        value = value.hex()
+    if isinstance(value, str):
+        return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+def dump_yaml(obj, indent: int = 0) -> str:
+    pad = "  " * indent
+    lines = []
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if isinstance(value, (dict, list)) and value:
+                lines.append(f"{pad}{key}:")
+                lines.append(dump_yaml(value, indent + 1))
+            else:
+                lines.append(f"{pad}{key}: {_yaml_scalar(value)}")
+    elif isinstance(obj, list):
+        for item in obj:
+            if isinstance(item, dict):
+                sub_lines = dump_yaml(item, indent + 1).split("\n")
+                lines.append(f"{pad}- {sub_lines[0].lstrip()}")
+                lines.extend(sub_lines[1:])
+            else:
+                lines.append(f"{pad}- {_yaml_scalar(item)}")
+    return "\n".join(lines)
+
+
+def bons_to_yaml_dict(table) -> dict:
+    return {
+        e.id: {
+            "Character": e.character,
+            "Hp": e.hp,
+            "Mp": e.mp,
+            "Drive": e.drive,
+            "ItemSlot": e.item_slot,
+            "AccSlot": e.acc_slot,
+            "ArmorSlot": e.armor_slot,
+            "Item1": e.item1,
+            "Item2": e.item2,
+        }
+        for e in table.entries
+    }
+
+
+def fmlv_to_yaml_dict(table) -> dict:
+    return {
+        i: {
+            "Type": e.fields_a // 16,
+            "Level": e.fields_a % 16,
+            "AntiRate": e.fields_b // 16,
+            "AbilityLevel": e.fields_b % 16,
+            "Reward": e.reward,
+            "Exp": e.exp,
+        }
+        for i, e in enumerate(table.entries)
+    }
+
+
+def lvup_to_yaml_dict(table) -> dict:
+    return {
+        c.name: [
+            {
+                "Level": i + 1,
+                "Exp": lvl.exp,
+                "Strength": lvl.strength,
+                "Magic": lvl.magic,
+                "Defense": lvl.defense,
+                "Ap": lvl.ap,
+                "AbiSword": lvl.abi_sword,
+                "AbiShield": lvl.abi_shield,
+                "AbiStaff": lvl.abi_staff,
+            }
+            for i, lvl in enumerate(c.levels)
+        ]
+        for c in table.characters
+    }
+
+
+def shop_to_yaml_dict(table) -> dict:
+    result = {}
+    inv_iter = iter(table.inventories)
+    prod_iter = iter(table.products)
+    for shop in table.shops:
+        inventories = []
+        for _ in range(shop.inventory_count):
+            inv = next(inv_iter)
+            products = [next(prod_iter).product for _ in range(inv.product_count)]
+            inventories.append({"UnlockEvent": inv.unlock_event, "Products": products})
+        result[shop.id] = {
+            "Entity": shop.entity,
+            "PosX": shop.pos_x,
+            "PosY": shop.pos_y,
+            "PosZ": shop.pos_z,
+            "Inventories": inventories,
+        }
+    return result
+
+
+# entry name -> builder(table) -> plain dict/list structure for dump_yaml().
+# trsr already has its own bespoke id -> {ItemId} yaml handled inline below.
+YAML_BUILDERS = {
+    "bons": bons_to_yaml_dict,
+    "fmlv": fmlv_to_yaml_dict,
+    "lvup": lvup_to_yaml_dict,
+    "shop": shop_to_yaml_dict,
+}
+
+
+def format_entries(entries, as_csv: bool) -> str:
+    if as_csv:
+        return entries_to_csv(entries)
+    fieldnames = [f.name for f in dataclasses.fields(entries[0])] if entries else []
+    lines = ["  ".join(fieldnames)]
+    lines += ["  ".join(str(getattr(e, name)) for name in fieldnames) for e in entries]
+    return "\n".join(lines) + "\n"
 
 
 def describe_composite(entry_name: str, table) -> str:
@@ -88,11 +210,24 @@ def main() -> None:
         help=f"Sub-table to parse. One of: {', '.join(sorted(REGISTRY))} (default: trsr)",
     )
     ap.add_argument("--type", choices=["Chest", "Event"], default=None, help="(trsr only) filter by entry type")
+    ap.add_argument(
+        "--character",
+        type=int,
+        default=None,
+        metavar="0-12",
+        help=(
+            "(lvup only) show all 99 levels for one character: "
+            f"{', '.join(f'{i}={name}' for i, name in enumerate(LVUP_CHARACTERS))}"
+        ),
+    )
     ap.add_argument("--csv", action="store_true", help="Output CSV instead of a summary")
     ap.add_argument(
         "--yaml",
         action="store_true",
-        help="(trsr only) Output a TrsrList.yml-style mapping of id -> ItemId",
+        help=(
+            "Output a YAML dump of the data. trsr gives a TrsrList.yml-style "
+            f"mapping of id -> ItemId; also supported for: {', '.join(sorted(YAML_BUILDERS))}"
+        ),
     )
     ap.add_argument("--output", type=Path, default=None, help="Write output to this file instead of stdout")
     args = ap.parse_args()
@@ -145,17 +280,26 @@ def main() -> None:
                 for i, e in enumerate(entries)
             ]
             out = "\n".join(lines) + "\n"
+    elif entry_name == "lvup" and args.character is not None:
+        if not 0 <= args.character < len(table.characters):
+            sys.exit(f"--character must be 0-{len(table.characters) - 1}")
+        character = table.characters[args.character]
+        print(f"LVUP  —  {character.name}  —  {len(character.levels)} levels", file=sys.stderr)
+        if args.yaml:
+            out = dump_yaml(lvup_to_yaml_dict(table)[character.name]) + "\n"
+        else:
+            out = format_entries(character.levels, args.csv)
+    elif args.yaml and entry_name in YAML_BUILDERS:
+        data_dict = YAML_BUILDERS[entry_name](table)
+        print(f"{entry_name.upper()} yaml  —  {len(data_dict)} entries", file=sys.stderr)
+        out = dump_yaml(data_dict) + "\n"
     elif entry_name in FLAT_TABLES:
         entries = table.entries
         print(f"{entry_name.upper()}  —  {len(entries)} entries", file=sys.stderr)
-        if args.csv:
-            out = entries_to_csv(entries)
-        else:
-            fieldnames = [f.name for f in dataclasses.fields(entries[0])] if entries else []
-            lines = ["  ".join(fieldnames)]
-            lines += ["  ".join(str(getattr(e, name)) for name in fieldnames) for e in entries]
-            out = "\n".join(lines) + "\n"
+        out = format_entries(entries, args.csv)
     else:
+        if args.yaml:
+            sys.exit(f"--yaml is only supported for: trsr, {', '.join(sorted(YAML_BUILDERS))}")
         if args.csv:
             sys.exit(
                 f"'{entry_name}' is a composite table; --csv is only supported for: "

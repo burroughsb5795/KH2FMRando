@@ -1,0 +1,315 @@
+0:
+  Type: 0
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 6
+1:
+  Type: 0
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 16
+2:
+  Type: 0
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 25
+3:
+  Type: 0
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 42
+4:
+  Type: 0
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 63
+5:
+  Type: 0
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 98
+6:
+  Type: 0
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 0
+7:
+  Type: 1
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 0
+  Exp: 80
+8:
+  Type: 1
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 385
+  Exp: 160
+9:
+  Type: 1
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 0
+  Exp: 280
+10:
+  Type: 1
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 162
+  Exp: 448
+11:
+  Type: 1
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 0
+  Exp: 560
+12:
+  Type: 1
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 162
+  Exp: 672
+13:
+  Type: 1
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 4
+  Reward: 0
+  Exp: 0
+14:
+  Type: 2
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 0
+  Exp: 12
+15:
+  Type: 2
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 386
+  Exp: 24
+16:
+  Type: 2
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 0
+  Exp: 48
+17:
+  Type: 2
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 412
+  Exp: 76
+18:
+  Type: 2
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 0
+  Exp: 133
+19:
+  Type: 2
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 413
+  Exp: 157
+20:
+  Type: 2
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 4
+  Reward: 0
+  Exp: 0
+21:
+  Type: 3
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 0
+  Exp: 3
+22:
+  Type: 3
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 568
+  Exp: 6
+23:
+  Type: 3
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 0
+  Exp: 12
+24:
+  Type: 3
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 405
+  Exp: 19
+25:
+  Type: 3
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 0
+  Exp: 23
+26:
+  Type: 3
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 407
+  Exp: 27
+27:
+  Type: 3
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 4
+  Reward: 0
+  Exp: 0
+28:
+  Type: 4
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 0
+  Exp: 40
+29:
+  Type: 4
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 387
+  Exp: 80
+30:
+  Type: 4
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 0
+  Exp: 140
+31:
+  Type: 4
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 163
+  Exp: 224
+32:
+  Type: 4
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 0
+  Exp: 448
+33:
+  Type: 4
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 163
+  Exp: 668
+34:
+  Type: 4
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 4
+  Reward: 0
+  Exp: 0
+35:
+  Type: 5
+  Level: 1
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 0
+  Exp: 12
+36:
+  Type: 5
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 1
+  Reward: 388
+  Exp: 24
+37:
+  Type: 5
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 0
+  Exp: 48
+38:
+  Type: 5
+  Level: 4
+  AntiRate: 0
+  AbilityLevel: 2
+  Reward: 398
+  Exp: 76
+39:
+  Type: 5
+  Level: 5
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 0
+  Exp: 133
+40:
+  Type: 5
+  Level: 6
+  AntiRate: 0
+  AbilityLevel: 3
+  Reward: 398
+  Exp: 157
+41:
+  Type: 5
+  Level: 7
+  AntiRate: 0
+  AbilityLevel: 4
+  Reward: 0
+  Exp: 0
+42:
+  Type: 6
+  Level: 1
+  AntiRate: 1
+  AbilityLevel: 9
+  Reward: 0
+  Exp: 10
+43:
+  Type: 6
+  Level: 2
+  AntiRate: 0
+  AbilityLevel: 10
+  Reward: 0
+  Exp: 5
+44:
+  Type: 6
+  Level: 3
+  AntiRate: 0
+  AbilityLevel: 0
+  Reward: 0
+  Exp: 0

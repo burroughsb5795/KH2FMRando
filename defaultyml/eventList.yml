@@ -1,0 +1,630 @@
+2:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+3:
+  Character: 9
+  Hp: 35
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+4:
+  Character: 9
+  Hp: 25
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+5:
+  Character: 5
+  Hp: 40
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+6:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 419
+  Item2: 0
+7:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+8:
+  Character: 5
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+9:
+  Character: 6
+  Hp: 20
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+10:
+  Character: 6
+  Hp: 25
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+12:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 414
+  Item2: 0
+15:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 21
+  Item2: 0
+16:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+17:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 423
+  Item2: 0
+18:
+  Character: 10
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+19:
+  Character: 10
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+20:
+  Character: 10
+  Hp: 10
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+21:
+  Character: 8
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+22:
+  Character: 8
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+23:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+24:
+  Character: 1
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 87
+  Item2: 0
+25:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 1
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+26:
+  Character: 1
+  Hp: 5
+  Mp: 10
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+28:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+29:
+  Character: 11
+  Hp: 30
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+30:
+  Character: 11
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+31:
+  Character: 12
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+32:
+  Character: 12
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+33:
+  Character: 14
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 82
+  Item2: 0
+34:
+  Character: 14
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+35:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 1
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+37:
+  Character: 7
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+38:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 1
+  ArmorSlot: 0
+  Item1: 389
+  Item2: 0
+39:
+  Character: 8
+  Hp: 10
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+40:
+  Character: 10
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+42:
+  Character: 7
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+43:
+  Character: 15
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 419
+  Item2: 0
+45:
+  Character: 12
+  Hp: 10
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+46:
+  Character: 7
+  Hp: 15
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+47:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 21
+  Item2: 0
+49:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 407
+  Item2: 0
+50:
+  Character: 11
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+51:
+  Character: 3
+  Hp: 92
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+52:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 3
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+53:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 1
+  ArmorSlot: 1
+  Item1: 0
+  Item2: 0
+54:
+  Character: 14
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 158
+  Item2: 0
+56:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+57:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 560
+  Item2: 0
+58:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+59:
+  Character: 8
+  Hp: 10
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+60:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 265
+  Item2: 0
+61:
+  Character: 12
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+62:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+63:
+  Character: 1
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 262
+  Item2: 0
+64:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+65:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 1
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+66:
+  Character: 3
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 542
+  Item2: 0
+67:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+68:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+69:
+  Character: 1
+  Hp: 5
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 539
+  Item2: 0
+70:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+71:
+  Character: 13
+  Hp: 25
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+72:
+  Character: 3
+  Hp: 4
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 0
+  Item2: 0
+73:
+  Character: 14
+  Hp: 0
+  Mp: 0
+  Drive: 0
+  ItemSlot: 0
+  AccSlot: 0
+  ArmorSlot: 0
+  Item1: 138
+  Item2: 0

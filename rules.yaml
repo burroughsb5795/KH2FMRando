@@ -1,0 +1,35 @@
+#rules for what can/cannot be shuffled in order to prevent softlocking
+
+trsr:
+  locked:
+    - {index: 375, reason: "Presents - story key"}
+    - {index: 376, reason: "Decoy Presents - story key"}
+    - {index: 368, reason: "Cursed Medallion - story key"}
+    - {index: 370, reason: "Auron's Statue - story key"}
+    - {index: 322, reason: "Namine's Sketches- story key"}
+    - {index: 363, reason: "Ice Cream- story key"}
+    - {index: 364, reason: "Picture- story key"}
+    - {index: 329, reason: "Membership - story key"}
+    - {index: 357, reason: "Seipher's Trophy- story key"}
+    - {index: 320, reason: "Struggle Trophy - story key"}
+    - {index: 325, reason: "Crystal Orb - story key"}
+    - {index: 340, reason: "Olympus Stone- story key"}
+lvup:
+  exclude_null: true
+
+  groups:
+    donald_abilities: { character: "Donald" }
+    goofy_abilities: { character: "Goofy" }
+    mickey_abilities: { character: "Mickey" }
+    auron_abilities: { character: "Auron" }
+    mulan_abilities: { character: "Ping/Mulan" }
+    alladin_abilities: { character: "Aladdin" }
+    sparrow_abilities: { character: "Sparrow" }
+    beast_abilities: { character: "Beast" }
+    jack_abilities: { character: "Jack" }
+    simba_abilities: { character: "Simba" }
+    tron_abilities: { character: "Tron" }
+    riku_abilities: { character: "Riku" }
+
+fmlv:
+  exclude_null: true
