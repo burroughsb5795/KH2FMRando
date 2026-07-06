@@ -4,7 +4,7 @@ import pytest
 
 from parser.trsr import parse_trsr, write_trsr
 
-TRSR = Path(__file__).parent / "data" / "trsr.bin"
+TRSR = Path(__file__).parent.parent / "data" / "trsr.bin"
 
 @pytest.fixture
 def raw():

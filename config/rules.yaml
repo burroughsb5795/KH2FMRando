@@ -1,6 +1,7 @@
 #rules for what can/cannot be shuffled in order to prevent softlocking
 
 trsr:
+  exclude_null: true
   locked:
     - {index: 375, reason: "Presents - story key"}
     - {index: 376, reason: "Decoy Presents - story key"}
@@ -22,7 +23,7 @@ lvup:
     goofy_abilities: { character: "Goofy" }
     mickey_abilities: { character: "Mickey" }
     auron_abilities: { character: "Auron" }
-    mulan_abilities: { character: "Ping/Mulan" }
+    mulan_abilities: { character: "PingMulan" }
     alladin_abilities: { character: "Aladdin" }
     sparrow_abilities: { character: "Sparrow" }
     beast_abilities: { character: "Beast" }
@@ -32,4 +33,7 @@ lvup:
     riku_abilities: { character: "Riku" }
 
 fmlv:
+  exclude_null: true
+
+bons:
   exclude_null: true

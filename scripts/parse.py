@@ -8,6 +8,8 @@ import io
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from parser.bar import parse_bar
 from parser.lvup import CHARACTERS as LVUP_CHARACTERS
 from parser.registry import REGISTRY, FLAT_TABLES
@@ -75,10 +77,29 @@ def dump_yaml(obj, indent: int = 0) -> str:
     return "\n".join(lines)
 
 
+# CharacterId -> name, matching OpenKH.Patcher's characterMap exactly
+# (OpenKh.Patcher/PatcherProcessor.cs). This is NOT the same list as
+# parser.lvup.CHARACTERS: the lvup table only has 13 rows (Roxas shares
+# Sora's), but bons entries can carry Roxas(14)/Ping(15) as their own
+# CharacterId, and OpenKH spells the Ping/Mulan entry without a slash. A
+# name that isn't an exact match against this map makes OpenKH silently
+# insert a duplicate row instead of overwriting the real one.
+BONS_CHARACTER_NAMES = {
+    1: "Sora", 2: "Donald", 3: "Goofy", 4: "Mickey", 5: "Auron",
+    6: "PingMulan", 7: "Aladdin", 8: "Sparrow", 9: "Beast", 10: "Jack",
+    11: "Simba", 12: "Tron", 13: "Riku", 14: "Roxas", 15: "Ping",
+}
+
+
 def bons_to_yaml_dict(table) -> dict:
-    return {
-        e.id: {
-            "Character": e.character,
+    """Nested id -> character -> fields. Each id has one row per rewarded
+    character (up to 4 in vanilla), so a flat id-keyed dict would silently
+    drop all but the last character's row -- this must stay nested."""
+    out: dict = {}
+    for e in table.entries:
+        name = BONS_CHARACTER_NAMES.get(e.character, f"Character{e.character}")
+        out.setdefault(e.id, {})[name] = {
+            "CharacterId": e.character,
             "Hp": e.hp,
             "Mp": e.mp,
             "Drive": e.drive,
@@ -88,8 +109,7 @@ def bons_to_yaml_dict(table) -> dict:
             "Item1": e.item1,
             "Item2": e.item2,
         }
-        for e in table.entries
-    }
+    return out
 
 
 def fmlv_to_yaml_dict(table) -> dict:
@@ -126,6 +146,13 @@ def lvup_to_yaml_dict(table) -> dict:
     }
 
 
+def item_to_yaml_dict(table) -> dict:
+    """id -> Category. Category is what the shuffle uses to keep item
+    placement engine-safe (e.g. a synth material or drive form crashes the
+    game if placed in a bons/event reward slot) -- see docs/FORMATS.md."""
+    return {e.id: {"Category": e.category} for e in table.entries}
+
+
 def shop_to_yaml_dict(table) -> dict:
     result = {}
     inv_iter = iter(table.inventories)
@@ -153,6 +180,7 @@ YAML_BUILDERS = {
     "fmlv": fmlv_to_yaml_dict,
     "lvup": lvup_to_yaml_dict,
     "shop": shop_to_yaml_dict,
+    "item": item_to_yaml_dict,
 }
 
 

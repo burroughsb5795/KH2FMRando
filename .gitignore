@@ -1,5 +1,10 @@
 data/
 mod/
+output/
+docs/
+claude.md
+
+.DS_Store
 
 __pycache__/
 htmlcov/
