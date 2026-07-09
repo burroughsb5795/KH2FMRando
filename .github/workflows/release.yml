@@ -1,0 +1,44 @@
+name: Build and release Windows app
+
+# Push a tag like "v1.0.0" to build the Windows app and attach it to a new
+# GitHub Release. Can also be run manually (Actions tab -> this workflow ->
+# Run workflow) without creating a release, to sanity-check the build.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-build.txt
+
+      - name: Run tests
+        run: pytest -v
+
+      - name: Build with PyInstaller
+        run: pyinstaller kh2rando.spec --noconfirm
+
+      - name: Zip the app
+        run: Compress-Archive -Path dist/KH2Rando -DestinationPath KH2Rando-windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KH2Rando-windows
+          path: KH2Rando-windows.zip
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: KH2Rando-windows.zip
+          generate_release_notes: true

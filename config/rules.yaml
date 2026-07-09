@@ -15,6 +15,14 @@ trsr:
     - {index: 320, reason: "Struggle Trophy - story key"}
     - {index: 325, reason: "Crystal Orb - story key"}
     - {index: 340, reason: "Olympus Stone- story key"}
+    # Master Form is dual-wield (needs 2 keyblades). Kingdom Key is Sora's
+    # innate weapon, not a chest item, so Oathkeeper/Oblivion (vanilla's
+    # earliest 2 extra keyblades) are his only path to a 2nd keyblade before
+    # Master Form's story checkpoint. If the shuffle pushes both past that
+    # point, equipping/using Master Form with <2 keyblades crashes (a known
+    # OpenKH/KH2 issue, confirmed via KH2Randomizer's troubleshooting docs).
+    - {index: 358, reason: "Oathkeeper - guarantees 2nd keyblade before Master Form"}
+    - {index: 391, reason: "Oblivion - guarantees 2nd keyblade before Master Form"}
 lvup:
   exclude_null: true
 
@@ -37,3 +45,13 @@ fmlv:
 
 bons:
   exclude_null: true
+  # Roxas's 4 event-bonus rewards in Simulated Twilight Town are his only
+  # bons entries and always land early in every playthrough (mandatory
+  # story), so forcing them guarantees these abilities every run without
+  # touching event scripts. id 33/54/73 already give these vanilla; id 34
+  # (TwilightThorn's follow-up) is empty in vanilla, used here as the 4th slot.
+  forced:
+    - {id: 33, character: "Roxas", part: "item1", item: 82, reason: "guaranteed starting ability (Guard)"}
+    - {id: 34, character: "Roxas", part: "item1", item: 402, reason: "guaranteed starting ability"}
+    - {id: 54, character: "Roxas", part: "item1", item: 158, reason: "guaranteed starting ability (Aerial Recovery)"}
+    - {id: 73, character: "Roxas", part: "item1", item: 138, reason: "guaranteed starting ability (Scan)"}
