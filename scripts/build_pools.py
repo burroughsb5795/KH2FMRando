@@ -12,19 +12,20 @@ config/rules.yaml, and writes output/pools.yml with five buckets:
                  visibility only, not part of any pool
 """
 
+import argparse
 import sys
 from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scripts.classify import classify, Slot, Disposition
+from scripts.paths import resource_root, output_root
 
-PRESETS_DIR = REPO_ROOT / "presets"
-RULES_PATH = REPO_ROOT / "config" / "rules.yaml"
-OUTPUT_PATH = REPO_ROOT / "output" / "pools.yml"
+PRESETS_DIR = resource_root() / "presets"
+RULES_PATH = resource_root() / "config" / "rules.yaml"
+OUTPUT_PATH = output_root() / "output" / "pools.yml"
 
 
 def slots_from_trsr(data: dict):
@@ -79,9 +80,17 @@ LVUP_CHARACTER_RENAME = {"Sora/Roxas": "Sora", "Ping/Mulan": "PingMulan"}
 def slots_from_lvup(data: dict):
     """Stat columns are excluded outright (kind="stat"), but carry their
     growth values in the address so the lvup writer can rebuild the entry
-    without re-reading the preset. The 3 ability columns (sword/shield/staff)
-    collapse into one logical slot per level so every Dream Weapon choice
-    gets the same ability -- see classify.py."""
+    without re-reading the preset.
+
+    The 3 ability columns (sword/shield/staff) teach the exact same 23
+    abilities in vanilla, just at different levels per weapon (confirmed:
+    the three columns are the identical multiset, just permuted). One
+    "ability" slot per level anchors the shuffle -- item_id is whichever
+    column is nonzero (always AbiSword when present) -- but all 3 raw
+    values are carried in the address so the writer can remap each column
+    independently by ability *identity* rather than by level, preserving
+    vanilla's per-weapon ordering shape instead of forcing every weapon
+    into lockstep. See write_lvup in shuffle_pools.py."""
     for character, levels in data.items():
         if character in LVUP_EXCLUDED_CHARACTERS:
             continue
@@ -93,9 +102,12 @@ def slots_from_lvup(data: dict):
                 "exp": lv["Exp"], "strength": lv["Strength"], "magic": lv["Magic"],
                 "defense": lv["Defense"], "ap": lv["Ap"],
             }, item_id=0, kind="stat")
-            ability = next((v for v in (lv["AbiSword"], lv["AbiShield"], lv["AbiStaff"]) if v), 0)
-            yield Slot("lvup", {"character": character, "level": level, "part": "ability"},
-                       item_id=ability)
+            raw_sword, raw_shield, raw_staff = lv["AbiSword"], lv["AbiShield"], lv["AbiStaff"]
+            ability = raw_sword or raw_shield or raw_staff
+            yield Slot("lvup", {
+                "character": character, "level": level, "part": "ability",
+                "raw_sword": raw_sword, "raw_shield": raw_shield, "raw_staff": raw_staff,
+            }, item_id=ability)
 
 
 # preset filename -> (table name as used in config/rules.yaml, slot adapter)
@@ -121,7 +133,10 @@ def all_group_names(rules: dict) -> set:
     return names
 
 
-def build_buckets(rules: dict) -> dict:
+def build_buckets(rules: dict, disabled_tables: frozenset = frozenset()) -> dict:
+    """disabled_tables lets a caller (e.g. the GUI) opt a whole table out of
+    randomization -- every one of its slots is routed to "locked" (kept at
+    its vanilla item_id) instead of being classified normally."""
     pool = []
     # pre-seeded so groups with no poolable members (e.g. a character with no
     # nonzero abilities in the vanilla data) still show up as empty, not missing
@@ -134,6 +149,9 @@ def build_buckets(rules: dict) -> dict:
         data = yaml.safe_load((PRESETS_DIR / filename).read_text())
         table_rules = rules.get(table_name)
         for slot in adapter(data):
+            if table_name in disabled_tables:
+                locked.append(record(slot, reason="table disabled by user"))
+                continue
             decision = classify(slot, table_rules)
             if decision.disposition is Disposition.POOL:
                 pool.append(record(slot))
@@ -156,8 +174,15 @@ def build_buckets(rules: dict) -> dict:
 
 
 def main():
+    ap = argparse.ArgumentParser(description="Classify presets/ slots into output/pools.yml")
+    ap.add_argument(
+        "--disable", nargs="*", default=[], choices=sorted(t for t, _ in PRESETS.values()),
+        help="Table(s) to keep 100%% vanilla (excluded from randomization entirely)",
+    )
+    args = ap.parse_args()
+
     rules = yaml.safe_load(RULES_PATH.read_text()) or {}
-    buckets = build_buckets(rules)
+    buckets = build_buckets(rules, disabled_tables=frozenset(args.disable))
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_PATH.open("w") as f:
