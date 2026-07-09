@@ -10,6 +10,11 @@
 #
 # data/*.bin is deliberately NOT bundled here -- it's extracted, copyrighted
 # game data the user must supply themselves (see scripts/paths.py).
+#
+# upx=False everywhere below: UPX compression is known to corrupt Tcl/Tk's
+# DLLs on Windows, causing a "Tcl/Tk data directory not found" crash at
+# launch even though the build itself succeeds -- confirmed against this
+# exact failure (github.com/pyinstaller/pyinstaller/issues/8856 and others).
 
 from pathlib import Path
 
@@ -45,7 +50,7 @@ exe = EXE(  # noqa: F821
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,
     console=False,
 )
 
@@ -54,7 +59,7 @@ coll = COLLECT(  # noqa: F821
     a.binaries,
     a.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
     name="KH2Rando",
 )
