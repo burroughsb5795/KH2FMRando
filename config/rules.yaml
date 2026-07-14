@@ -2,6 +2,22 @@
 
 trsr:
   exclude_null: true
+  # Valor, Master, and Final Form are all dual-wield (need 2 keyblades).
+  # Kingdom Key is Sora's innate weapon, not a chest item, so Oathkeeper/
+  # Oblivion are his only path to a 2nd keyblade. All 3 of those forms are
+  # now ordinary pool items (see FINAL_FORM_HOST_INDEX in build_pools.py),
+  # so any of them could land on literally the first chest a player opens --
+  # forcing Oathkeeper/Oblivion into indices 235/236 (chest ids 447/448,
+  # "Old Mansion Potion"/"Old Mansion Mythril Shard", the first two chests
+  # reachable after regaining control from Roxas) guarantees a 2nd keyblade
+  # before *any* other chest can possibly be opened, not just before Master
+  # Form's old story checkpoint. Equipping/using a dual-wield form with <2
+  # keyblades crashes (a known OpenKH/KH2 issue, confirmed via KH2Randomizer's
+  # troubleshooting docs and directly reproduced against a real seed).
+  forced:
+    - {index: 235, item: 42, reason: "Oathkeeper - guarantees 2nd keyblade from the very first chest"}
+    - {index: 236, item: 43, reason: "Oblivion - guarantees 2nd keyblade from the very first chest"}
+    - {index: }
   locked:
     - {index: 375, reason: "Presents - story key"}
     - {index: 376, reason: "Decoy Presents - story key"}
@@ -15,14 +31,7 @@ trsr:
     - {index: 320, reason: "Struggle Trophy - story key"}
     - {index: 325, reason: "Crystal Orb - story key"}
     - {index: 340, reason: "Olympus Stone- story key"}
-    # Master Form is dual-wield (needs 2 keyblades). Kingdom Key is Sora's
-    # innate weapon, not a chest item, so Oathkeeper/Oblivion (vanilla's
-    # earliest 2 extra keyblades) are his only path to a 2nd keyblade before
-    # Master Form's story checkpoint. If the shuffle pushes both past that
-    # point, equipping/using Master Form with <2 keyblades crashes (a known
-    # OpenKH/KH2 issue, confirmed via KH2Randomizer's troubleshooting docs).
-    - {index: 358, reason: "Oathkeeper - guarantees 2nd keyblade before Master Form"}
-    - {index: 391, reason: "Oblivion - guarantees 2nd keyblade before Master Form"}
+    - {index: }
 lvup:
   exclude_null: true
 

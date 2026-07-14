@@ -28,11 +28,24 @@ RULES_PATH = resource_root() / "config" / "rules.yaml"
 OUTPUT_PATH = output_root() / "output" / "pools.yml"
 
 
+# Final Form (item 29) has no vanilla trsr slot -- unlike Valor/Wisdom/
+# Master/Limit Form, which are already ordinary chest items and have been
+# poolable all along, Final Form is normally granted by a post-Roxas story
+# event in The World That Never Was that this project doesn't touch. Row 2
+# (trsr id 498, vanilla "Mythril Shard", one of 37 in the game) is
+# repurposed to supply it instead, making it a genuinely obtainable,
+# randomly-placed pool item like the other forms -- the normal late-game
+# unlock still works independently if a seed doesn't hand it out early.
+FINAL_FORM_ITEM_ID = 29
+FINAL_FORM_HOST_INDEX = 2
+
+
 def slots_from_trsr(data: dict):
     """trsrList.yml is keyed by TrsrEntry.id, in table row order; the row
     order (not the id) is what rules.yaml's trsr `index` rules address."""
     for i, fields in enumerate(data.values()):
-        yield Slot("trsr", {"index": i}, item_id=fields["ItemId"])
+        item_id = FINAL_FORM_ITEM_ID if i == FINAL_FORM_HOST_INDEX else fields["ItemId"]
+        yield Slot("trsr", {"index": i}, item_id=item_id)
 
 
 def slots_from_fmlv(data: dict):

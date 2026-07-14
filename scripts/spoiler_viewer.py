@@ -33,6 +33,7 @@ DEFAULT_BIN = output_root() / "data" / "03system.bin"
 DEFAULT_YML = output_root() / "output" / "TrsrList.yml"
 ITEM_LIST_PATH = resource_root() / "presets" / "itemList.yml"
 ITEM_NAMES_PATH = resource_root() / "config" / "itemid.txt"
+TRSR_LIST_PATH = output_root() / "presets" / "trsrList.yml"
 
 # Verified against OpenKH.Patcher's worldIndexMap (OpenKh.Patcher/
 # PatcherProcessor.cs), not guessed -- world 6 is Olympus Coliseum, not
@@ -69,6 +70,11 @@ def load_chest_metadata(bin_path: Path) -> dict[int, TrsrEntry]:
     table = parse_trsr(bar.read(entry))
     return {e.id: e for e in table.entries}
 
+def load_indeces(path: Path) -> dict[int, int]:
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text()) or {}
+    return {chest_id: i for i, (chest_id, fields) in enumerate(data.items())}
 
 def load_item_categories(path: Path) -> dict[int, int]:
     if not path.exists():
@@ -103,6 +109,7 @@ class SpoilerViewer:
 
         self.categories = load_item_categories(ITEM_LIST_PATH)
         self.item_names = load_item_names(ITEM_NAMES_PATH)
+        self.indeces = load_indeces(TRSR_LIST_PATH)
         self.chest_meta: dict[int, TrsrEntry] = {}
         try:
             self.chest_meta = load_chest_metadata(DEFAULT_BIN)
@@ -132,18 +139,20 @@ class SpoilerViewer:
 
         tree_frame = ttk.Frame(root)
         tree_frame.pack(fill="both", expand=True, **pad)
-        columns = ("item_name", "item_id", "category", "room")
+        columns = ("item_name", "item_id", "category", "room", "index")
         self.tree = ttk.Treeview(tree_frame, columns=columns, show="tree headings")
         self.tree.heading("#0", text="World / Chest")
         self.tree.heading("item_name", text="Item")
         self.tree.heading("item_id", text="Item ID")
         self.tree.heading("category", text="Category")
         self.tree.heading("room", text="Room")
+        self.tree.heading("index", text="Index")
         self.tree.column("#0", width=260)
         self.tree.column("item_name", width=220)
         self.tree.column("item_id", width=70, anchor="center")
         self.tree.column("category", width=80, anchor="center")
         self.tree.column("room", width=70, anchor="center")
+        self.tree.column("index", width=80, anchor="center")
         scrollbar = ttk.Scrollbar(tree_frame, command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         self.tree.pack(side="left", fill="both", expand=True)
@@ -187,6 +196,7 @@ class SpoilerViewer:
         for chest_id, fields in data.items():
             item_id = fields.get("ItemId", 0)
             meta = self.chest_meta.get(chest_id)
+            index = self.indeces.get(chest_id, 0)
             if meta is None:
                 world_name = "Unknown World"
                 room = "?"
@@ -196,7 +206,7 @@ class SpoilerViewer:
                 room = meta.room
             category = self.categories.get(item_id, "-")
             item_name = self.item_names.get(item_id, f"Unknown Item {item_id}")
-            rows.append((world_name, chest_id, item_id, item_name, category, room))
+            rows.append((world_name, chest_id, item_id, item_name, category, room, index))
 
         self._rows = rows
         note = f" ({unresolved} unresolved)" if unresolved else ""
@@ -208,23 +218,22 @@ class SpoilerViewer:
         self.tree.delete(*self.tree.get_children())
 
         by_world: dict[str, list[tuple]] = {}
-        for world_name, chest_id, item_id, item_name, category, room in self._rows:
-            haystack = f"{world_name} {chest_id} {item_id} {item_name} {category}".lower()
+        for world_name, chest_id, item_id, item_name, category, room, index in self._rows:
+            haystack = f"{world_name} {chest_id} {item_id} {item_name} {category} {index}".lower()
             if query and query not in haystack:
                 continue
-            by_world.setdefault(world_name, []).append((chest_id, item_id, item_name, category, room))
+            by_world.setdefault(world_name, []).append((chest_id, item_id, item_name, category, room, index))
 
         for world_name in sorted(by_world):
             chests = by_world[world_name]
             world_node = self.tree.insert(
                 "", "end", text=f"{world_name}  ({len(chests)} chests)", open=bool(query),
             )
-            for chest_id, item_id, item_name, category, room in sorted(chests):
+            for chest_id, item_id, item_name, category, room, index in sorted(chests):
                 self.tree.insert(
                     world_node, "end", text=f"Chest {chest_id}",
-                    values=(item_name, item_id, category, room),
+                    values=(item_name, item_id, category, room, index),
                 )
-
 
 def main() -> None:
     initial = Path(sys.argv[1]) if len(sys.argv) > 1 else None
