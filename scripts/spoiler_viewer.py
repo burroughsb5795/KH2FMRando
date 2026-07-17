@@ -17,6 +17,9 @@ import sys
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
+from unicodedata import category
+
+
 
 import yaml
 
@@ -30,7 +33,8 @@ from scripts.paths import resource_root, output_root
 # so it's looked up next to the exe, like output/ -- not in the bundled
 # resource dir.
 DEFAULT_BIN = output_root() / "data" / "03system.bin"
-DEFAULT_YML = output_root() / "output" / "TrsrList.yml"
+TRSR_YML = output_root() / "output" / "TrsrList.yml"
+FORM_YML = output_root() / "output" / "formsList.yml"
 ITEM_LIST_PATH = resource_root() / "presets" / "itemList.yml"
 ITEM_NAMES_PATH = resource_root() / "config" / "itemid.txt"
 TRSR_LIST_PATH = output_root() / "presets" / "trsrList.yml"
@@ -101,11 +105,9 @@ def load_item_names(path: Path) -> dict[int, str]:
     return names
 
 
-class SpoilerViewer:
+class TreasureViewer:
     def __init__(self, root: tk.Tk, initial_path: Path | None = None):
         self.root = root
-        root.title("KH2FM Rando -- Chest Spoiler Viewer")
-        root.geometry("760x560")
 
         self.categories = load_item_categories(ITEM_LIST_PATH)
         self.item_names = load_item_names(ITEM_NAMES_PATH)
@@ -164,7 +166,7 @@ class SpoilerViewer:
         self._rows: list[tuple] = []  # (world_name, chest_id, item_id, item_name, category, room)
         self._loaded_path: Path | None = None
 
-        start_path = initial_path or (DEFAULT_YML if DEFAULT_YML.exists() else None)
+        start_path = initial_path or (TRSR_YML if TRSR_YML.exists() else None)
         if start_path:
             self.load_yaml(start_path)
 
@@ -235,10 +237,274 @@ class SpoilerViewer:
                     values=(item_name, item_id, category, room, index),
                 )
 
+
+class FormTableViewer:
+    def __init__(self, root: tk.Tk, initial_path: Path | None = None):
+        self.root = root
+
+        self.categories = load_item_categories(ITEM_LIST_PATH)
+        self.item_names = load_item_names(ITEM_NAMES_PATH)
+        self.indeces = load_indeces(TRSR_LIST_PATH)
+
+        pad = {"padx": 8, "pady": 6}
+
+        top = ttk.Frame(root)
+        top.pack(fill="x", **pad)
+        ttk.Button(top, text="Open formsList.yml...", command=self.open_file).pack(side="left")
+        ttk.Button(top, text="Reload", command=self.reload).pack(side="left", padx=(6, 0))
+        self.path_var = tk.StringVar(value="(none loaded)")
+        ttk.Label(top, textvariable=self.path_var).pack(side="left", padx=(8, 0))
+
+        search_frame = ttk.Frame(root)
+        search_frame.pack(fill="x", **pad)
+        ttk.Label(search_frame, text="Filter:").pack(side="left")
+        self.filter_var = tk.StringVar()
+        self.filter_var.trace_add("write", lambda *_: self.apply_filter())
+        ttk.Entry(search_frame, textvariable=self.filter_var).pack(side="left", fill="x", expand=True, padx=(6, 0))
+
+        tree_frame = ttk.Frame(root)
+        tree_frame.pack(fill="both", expand=True, **pad)
+        
+        
+        columns = ("FormId", "FormLevel", "Experience", "Ability", "Ability Name", "GrowthAbilityLevel", "Category")
+        self.tree = ttk.Treeview(tree_frame, columns=columns, show="tree headings")
+        self.tree.heading("#0", text="Form Name")
+        self.tree.heading("FormId", text="Form ID")
+        self.tree.heading("FormLevel", text="Form Level")
+        self.tree.heading("Experience", text="Experience")
+        self.tree.heading("Ability", text="Ability")
+        self.tree.heading("Ability Name", text="Ability Name")
+        self.tree.heading("GrowthAbilityLevel", text="Growth Ability Level")
+        self.tree.heading("Category", text="Category")
+        self.tree.column("#0", width=260)
+        self.tree.column("FormId", width=70, anchor="center")
+        self.tree.column("FormLevel", width=70, anchor="center")
+        self.tree.column("Experience", width=70, anchor="center")
+        self.tree.column("Ability", width=70, anchor="center")
+        self.tree.column("Ability Name", width=120, anchor="center")
+        self.tree.column("GrowthAbilityLevel", width=70, anchor="center")
+        self.tree.column("Category", width=100, anchor="center")
+        scrollbar = ttk.Scrollbar(tree_frame, command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        self.tree.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        self.status_var = tk.StringVar(value="Load a formsList.yml to begin.")
+        ttk.Label(root, textvariable=self.status_var).pack(fill="x", padx=8, pady=(0, 8))
+
+        self._rows: list[tuple] = []  # (form_name, ability, ability_name, formId, formLevel, growthAbility, category, experience)
+        self._loaded_path: Path | None = None
+
+        start_path = initial_path or (FORM_YML if FORM_YML.exists() else None)
+        if start_path:
+            self.load_yaml(start_path)
+
+    def open_file(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Open formsList.yml",
+            initialdir=str(output_root() / "output"),
+            filetypes=[("YAML files", "*.yml *.yaml"), ("All files", "*.*")],
+        )
+        if path:
+            self.load_yaml(Path(path))
+
+    def reload(self) -> None:
+        if self._loaded_path is not None:
+            self.load_yaml(self._loaded_path)
+
+    def load_yaml(self, path: Path) -> None:
+        try:
+            data = yaml.safe_load(path.read_text()) or {}
+        except Exception as exc:
+            messagebox.showerror("Failed to load", str(exc))
+            return
+
+        self._loaded_path = path
+        self.path_var.set(str(path))
+
+        rows = []
+        for form_name, levels in data.items():
+            for entry in levels:
+                ability = entry.get("Ability", 0)
+                formId = entry.get("FormId", 0)
+                formLevel = entry.get("FormLevel", 0)
+                growthAbility = entry.get("GrowthAbilityLevel", 0)
+                experience = entry.get("Experience", 0)
+                category = self.categories.get(ability, "-")
+                ability_name = self.item_names.get(ability, f"Unknown Item {ability}")
+                rows.append((form_name, ability, ability_name, formId, formLevel, growthAbility, category, experience))
+            
+        self._rows = rows
+        
+        self.apply_filter()
+
+    def apply_filter(self) -> None:
+        query = self.filter_var.get().strip().lower()
+        self.tree.delete(*self.tree.get_children())
+
+        by_form: dict[str, list[tuple]] = {}
+        for form_name, ability, ability_name, formId, formLevel, growthAbility, category, experience in self._rows:
+            haystack = f"{form_name}, {ability}, {ability_name}, {formId}, {formLevel}, {growthAbility}, {category}, {experience}".lower()
+            if query and query not in haystack:
+                continue
+            by_form.setdefault(form_name, []).append((ability, ability_name, formId, formLevel, growthAbility, category, experience))
+
+
+        for form_name in sorted(by_form):
+            forms = by_form[form_name]
+            form_node = self.tree.insert(
+                "", "end", text=f"{form_name}  ({len(forms)} levels)", open=bool(query),
+            )
+            for ability, ability_name, formId, formLevel, growthAbility, category, experience in sorted(forms, key=lambda t: t[3]):  # sort by formLevel
+                self.tree.insert(
+                    form_node, "end", text=f"{form_name} Form",
+                    values=( formId, formLevel, experience, ability, ability_name, growthAbility, category),
+                )
+
+
+class LevelTableViewer:
+    def __init__(self, root: tk.Tk, initial_path: Path | None = None):
+        self.root = root
+
+        self.categories = load_item_categories(ITEM_LIST_PATH)
+        self.item_names = load_item_names(ITEM_NAMES_PATH)
+        self.indeces = load_indeces(TRSR_LIST_PATH)
+
+        pad = {"padx": 8, "pady": 6}
+
+        top = ttk.Frame(root)
+        top.pack(fill="x", **pad)
+        ttk.Button(top, text="Open formsList.yml...", command=self.open_file).pack(side="left")
+        ttk.Button(top, text="Reload", command=self.reload).pack(side="left", padx=(6, 0))
+        self.path_var = tk.StringVar(value="(none loaded)")
+        ttk.Label(top, textvariable=self.path_var).pack(side="left", padx=(8, 0))
+
+        search_frame = ttk.Frame(root)
+        search_frame.pack(fill="x", **pad)
+        ttk.Label(search_frame, text="Filter:").pack(side="left")
+        self.filter_var = tk.StringVar()
+        self.filter_var.trace_add("write", lambda *_: self.apply_filter())
+        ttk.Entry(search_frame, textvariable=self.filter_var).pack(side="left", fill="x", expand=True, padx=(6, 0))
+
+        tree_frame = ttk.Frame(root)
+        tree_frame.pack(fill="both", expand=True, **pad)
+        
+        
+        columns = ("FormId", "FormLevel", "Experience", "Ability", "GrowthAbilityLevel")
+        self.tree = ttk.Treeview(tree_frame, columns=columns, show="tree headings")
+        self.tree.heading("#0", text="Form Name")
+        self.tree.heading("FormId", text="Form ID")
+        self.tree.heading("FormLevel", text="Form Level")
+        self.tree.heading("Experience", text="Experience")
+        self.tree.heading("Ability", text="Ability")
+        self.tree.heading("GrowthAbilityLevel", text="Growth Ability Level")
+        self.tree.column("#0", width=260)
+        self.tree.column("FormId", width=70, anchor="center")
+        self.tree.column("FormLevel", width=70, anchor="center")
+        self.tree.column("Experience", width=70, anchor="center")
+        self.tree.column("Ability", width=70, anchor="center")
+        self.tree.column("GrowthAbilityLevel", width=70, anchor="center")
+        self.tree.column("FormId", width=70, anchor="center")
+        self.tree.column("FormLevel", width=70, anchor="center")
+        self.tree.column("Experience", width=70, anchor="center")
+        self.tree.column("Ability", width=70, anchor="center")
+        self.tree.column("GrowthAbilityLevel", width=70, anchor="center")
+        scrollbar = ttk.Scrollbar(tree_frame, command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        self.tree.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        self.status_var = tk.StringVar(value="Load a formsList.yml to begin.")
+        ttk.Label(root, textvariable=self.status_var).pack(fill="x", padx=8, pady=(0, 8))
+
+        self._rows: list[tuple] = []  # (world_name, chest_id, item_id, item_name, category, room)
+        self._loaded_path: Path | None = None
+
+        start_path = initial_path or (FORM_YML if FORM_YML.exists() else None)
+        if start_path:
+            self.load_yaml(start_path)
+
+    def open_file(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Open formsList.yml",
+            initialdir=str(output_root() / "output"),
+            filetypes=[("YAML files", "*.yml *.yaml"), ("All files", "*.*")],
+        )
+        if path:
+            self.load_yaml(Path(path))
+
+    def reload(self) -> None:
+        if self._loaded_path is not None:
+            self.load_yaml(self._loaded_path)
+
+    def load_yaml(self, path: Path) -> None:
+        try:
+            data = yaml.safe_load(path.read_text()) or {}
+        except Exception as exc:
+            messagebox.showerror("Failed to load", str(exc))
+            return
+
+        self._loaded_path = path
+        self.path_var.set(str(path))
+
+        rows = []
+        for form_name, levels in data.items():
+            for entry in levels:
+                ability = entry.get("Ability", 0)
+                formId = entry.get("FormId", 0)
+                formLevel = entry.get("FormLevel", 0)
+                growthAbility = entry.get("GrowthAbilityLevel", 0)
+                experience = entry.get("Experience", 0)
+                rows.append((form_name, ability, formId, formLevel, growthAbility, experience))
+            
+        self._rows = rows
+        
+        self.apply_filter()
+
+    def apply_filter(self) -> None:
+        query = self.filter_var.get().strip().lower()
+        self.tree.delete(*self.tree.get_children())
+
+        by_form: dict[str, list[tuple]] = {}
+        for form_name, ability, formId, formLevel, growthAbility, experience in self._rows:
+            haystack = f"{form_name}, {ability}, {formId}, {formLevel}, {growthAbility}, {experience}".lower()
+            if query and query not in haystack:
+                continue
+            by_form.setdefault(form_name, []).append((ability, formId, formLevel, growthAbility, experience))
+
+        for form_name in sorted(by_form):
+            forms = by_form[form_name]
+            form_node = self.tree.insert(
+                "", "end", text=f"{form_name}  ({len(forms)} levels)", open=bool(query),
+            )
+            for ability, formId, formLevel, growthAbility, experience in sorted(forms, key=lambda t: t[2]):  # sort by formLevel
+                self.tree.insert(
+                    form_node, "end", text=f"{form_name} Form",
+                    values=( formId, formLevel, experience, ability, growthAbility),
+                )
+
+
 def main() -> None:
     initial = Path(sys.argv[1]) if len(sys.argv) > 1 else None
     root = tk.Tk()
-    SpoilerViewer(root, initial_path=initial)
+    root.title("KH2FM Rando -- Chest Spoiler Viewer")
+    root.geometry("760x560")
+    notebook = ttk.Notebook(root)
+    notebook.pack(fill="both", expand=True, padx=8, pady=6)
+
+    trsr_tab = ttk.Frame(notebook)
+    lvup_tab = ttk.Frame(notebook)
+    form_tab = ttk.Frame(notebook)
+    event_tab = ttk.Frame(notebook)
+    notebook.add(trsr_tab, text="Chest Table")
+    notebook.add(lvup_tab, text="Level Table")
+    notebook.add(event_tab, text="Event Table")
+    notebook.add(form_tab, text="Form Table")
+
+    TreasureViewer(trsr_tab, initial_path=initial)
+    FormTableViewer(form_tab, initial_path=initial)
+    LevelTableViewer(lvup_tab, initial_path=initial)
+
     root.mainloop()
 
 

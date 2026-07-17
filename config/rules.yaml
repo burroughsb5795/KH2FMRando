@@ -31,7 +31,8 @@ trsr:
     - {index: 320, reason: "Struggle Trophy - story key"}
     - {index: 325, reason: "Crystal Orb - story key"}
     - {index: 340, reason: "Olympus Stone- story key"}
-    - {index: }
+    - {index: 33, reason: "Magnet - Need at least 2 for Atlantica"}
+    
 lvup:
   exclude_null: true
 

@@ -1,5 +1,6 @@
 
 Id	Item
+0	-
 1	Potion
 2	Hi-Potion
 3	Ether
