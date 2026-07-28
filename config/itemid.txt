@@ -1,5 +1,4 @@
-
-Id	Item
+Id  Item
 0	-
 1	Potion
 2	Hi-Potion

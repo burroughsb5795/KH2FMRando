@@ -35,9 +35,11 @@ from scripts.paths import resource_root, output_root
 DEFAULT_BIN = output_root() / "data" / "03system.bin"
 TRSR_YML = output_root() / "output" / "TrsrList.yml"
 FORM_YML = output_root() / "output" / "formsList.yml"
+LVL_YML = output_root() / "output" / "lvlList.yml"
 ITEM_LIST_PATH = resource_root() / "presets" / "itemList.yml"
 ITEM_NAMES_PATH = resource_root() / "config" / "itemid.txt"
 TRSR_LIST_PATH = output_root() / "presets" / "trsrList.yml"
+
 
 # Verified against OpenKH.Patcher's worldIndexMap (OpenKh.Patcher/
 # PatcherProcessor.cs), not guessed -- world 6 is Olympus Coliseum, not
@@ -374,7 +376,7 @@ class LevelTableViewer:
 
         top = ttk.Frame(root)
         top.pack(fill="x", **pad)
-        ttk.Button(top, text="Open formsList.yml...", command=self.open_file).pack(side="left")
+        ttk.Button(top, text="Open lvup.yml...", command=self.open_file).pack(side="left")
         ttk.Button(top, text="Reload", command=self.reload).pack(side="left", padx=(6, 0))
         self.path_var = tk.StringVar(value="(none loaded)")
         ttk.Label(top, textvariable=self.path_var).pack(side="left", padx=(8, 0))
@@ -390,43 +392,40 @@ class LevelTableViewer:
         tree_frame.pack(fill="both", expand=True, **pad)
         
         
-        columns = ("FormId", "FormLevel", "Experience", "Ability", "GrowthAbilityLevel")
+        columns = ("Level", "Experience", "AbiSword", "AbiShield", "AbiStaff")
         self.tree = ttk.Treeview(tree_frame, columns=columns, show="tree headings")
-        self.tree.heading("#0", text="Form Name")
-        self.tree.heading("FormId", text="Form ID")
-        self.tree.heading("FormLevel", text="Form Level")
+        self.tree.heading("#0", text="Character")
+        self.tree.heading("Level", text="Level")
         self.tree.heading("Experience", text="Experience")
-        self.tree.heading("Ability", text="Ability")
-        self.tree.heading("GrowthAbilityLevel", text="Growth Ability Level")
+        self.tree.heading("AbiSword", text="Sword")
+        self.tree.heading("AbiShield", text="Shield")
+        self.tree.heading("AbiStaff", text="Staff")
+        
         self.tree.column("#0", width=260)
-        self.tree.column("FormId", width=70, anchor="center")
-        self.tree.column("FormLevel", width=70, anchor="center")
+        self.tree.column("Level", width=70, anchor="center")
         self.tree.column("Experience", width=70, anchor="center")
-        self.tree.column("Ability", width=70, anchor="center")
-        self.tree.column("GrowthAbilityLevel", width=70, anchor="center")
-        self.tree.column("FormId", width=70, anchor="center")
-        self.tree.column("FormLevel", width=70, anchor="center")
-        self.tree.column("Experience", width=70, anchor="center")
-        self.tree.column("Ability", width=70, anchor="center")
-        self.tree.column("GrowthAbilityLevel", width=70, anchor="center")
+        self.tree.column("AbiSword", width=70, anchor="center")
+        self.tree.column("AbiShield", width=70, anchor="center")
+        self.tree.column("AbiStaff", width=70, anchor="center")
+        
         scrollbar = ttk.Scrollbar(tree_frame, command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         self.tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        self.status_var = tk.StringVar(value="Load a formsList.yml to begin.")
+        self.status_var = tk.StringVar(value="Load a lvup.yml to begin.")
         ttk.Label(root, textvariable=self.status_var).pack(fill="x", padx=8, pady=(0, 8))
 
-        self._rows: list[tuple] = []  # (world_name, chest_id, item_id, item_name, category, room)
+        self._rows: list[tuple] = []  # (character, level, experience, abiSword, abiShield, abiStaff)
         self._loaded_path: Path | None = None
 
-        start_path = initial_path or (FORM_YML if FORM_YML.exists() else None)
+        start_path = initial_path or (LVL_YML if LVL_YML.exists() else None)
         if start_path:
             self.load_yaml(start_path)
 
     def open_file(self) -> None:
         path = filedialog.askopenfilename(
-            title="Open formsList.yml",
+            title="Open lvup.yml",
             initialdir=str(output_root() / "output"),
             filetypes=[("YAML files", "*.yml *.yaml"), ("All files", "*.*")],
         )
@@ -448,14 +447,13 @@ class LevelTableViewer:
         self.path_var.set(str(path))
 
         rows = []
-        for form_name, levels in data.items():
-            for entry in levels:
-                ability = entry.get("Ability", 0)
-                formId = entry.get("FormId", 0)
-                formLevel = entry.get("FormLevel", 0)
-                growthAbility = entry.get("GrowthAbilityLevel", 0)
-                experience = entry.get("Experience", 0)
-                rows.append((form_name, ability, formId, formLevel, growthAbility, experience))
+        for character, levels in data.items():
+            for level, entry in levels.items():
+                experience = entry.get("Exp", 0)
+                abiSword = entry.get("SwordAbility", 0)
+                abiShield = entry.get("ShieldAbility", 0)
+                abiStaff = entry.get("StaffAbility", 0)
+                rows.append((character, level, experience, abiSword, abiShield, abiStaff))
             
         self._rows = rows
         
@@ -465,22 +463,22 @@ class LevelTableViewer:
         query = self.filter_var.get().strip().lower()
         self.tree.delete(*self.tree.get_children())
 
-        by_form: dict[str, list[tuple]] = {}
-        for form_name, ability, formId, formLevel, growthAbility, experience in self._rows:
-            haystack = f"{form_name}, {ability}, {formId}, {formLevel}, {growthAbility}, {experience}".lower()
+        by_character: dict[str, list[tuple]] = {}
+        for character, level, experience, abiSword, abiShield, abiStaff in self._rows:
+            haystack = f"{character}, {level}, {experience}, {abiSword}, {abiShield}, {abiStaff}".lower()
             if query and query not in haystack:
                 continue
-            by_form.setdefault(form_name, []).append((ability, formId, formLevel, growthAbility, experience))
+            by_character.setdefault(character, []).append((level, experience, abiSword, abiShield, abiStaff))
 
-        for form_name in sorted(by_form):
-            forms = by_form[form_name]
+        for character in sorted(by_character):
+            characters = by_character[character]
             form_node = self.tree.insert(
-                "", "end", text=f"{form_name}  ({len(forms)} levels)", open=bool(query),
+                "", "end", text=f"{character}  ({len(characters)} levels)", open=bool(query),
             )
-            for ability, formId, formLevel, growthAbility, experience in sorted(forms, key=lambda t: t[2]):  # sort by formLevel
+            for level, experience, abiSword, abiShield, abiStaff in sorted(characters, key=lambda t: t[0]):  # sort by level
                 self.tree.insert(
-                    form_node, "end", text=f"{form_name} Form",
-                    values=( formId, formLevel, experience, ability, growthAbility),
+                    form_node, "end", text=f"{character}",
+                    values=(level, experience, abiSword, abiShield, abiStaff),
                 )
 
 

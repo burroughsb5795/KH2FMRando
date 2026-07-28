@@ -229,7 +229,7 @@ def main() -> None:
     ap.add_argument(
         "bin_file",
         nargs="?",
-        default="data/03system.bin",
+        default="../data/03system.bin",
         help="BAR archive or raw sub-table .bin (default: data/03system.bin)",
     )
     ap.add_argument(

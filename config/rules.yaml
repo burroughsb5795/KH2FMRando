@@ -31,8 +31,8 @@ trsr:
     - {index: 320, reason: "Struggle Trophy - story key"}
     - {index: 325, reason: "Crystal Orb - story key"}
     - {index: 340, reason: "Olympus Stone- story key"}
-    - {index: 33, reason: "Magnet - Need at least 2 for Atlantica"}
-    
+    - {index: 358, reason: "Magnet - Need at least 2 for Atlantica"}
+    - {index: 352, reason: "Magnet - Need at least 2 for Atlantica"}
 lvup:
   exclude_null: true
 
@@ -65,3 +65,4 @@ bons:
     - {id: 34, character: "Roxas", part: "item1", item: 402, reason: "guaranteed starting ability"}
     - {id: 54, character: "Roxas", part: "item1", item: 158, reason: "guaranteed starting ability (Aerial Recovery)"}
     - {id: 73, character: "Roxas", part: "item1", item: 138, reason: "guaranteed starting ability (Scan)"}
+    - {id: 22, character: "Sora", part: "item1", item: 87, reason: "guaranteed Magnet 2"}
